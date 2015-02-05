@@ -8,12 +8,13 @@ coursera = 1
 
 ## 1: (Task 1) Movie Review
 ## Task 1
+from random import randint
 def movie_review(name):
     """
     Input: the name of a movie
     Output: a string (one of the review options), selected at random using randint
     """
-    return ...
+    return ["See it!", "A gem!", "Ideological claptrap!"][randint(0, 2)]
 
 
 
@@ -32,9 +33,14 @@ def makeInverseIndex(strlist):
     >>> makeInverseIndex(['hello world','hello','hello cat','hellolot of cats']) == {'hello': {0, 1, 2}, 'cat': {2}, 'of': {3}, 'world': {0}, 'cats': {3}, 'hellolot': {3}}
     True
     """
-    pass
-
-
+    occurence_set = {}
+    for sindex, s in enumerate(strlist):
+        for w in s.split():
+            if w in occurence_set:
+                occurence_set[w].add(sindex)
+            else:
+                occurence_set[w] = {sindex}
+    return occurence_set
 
 ## 3: (Task 3) Or Search
 def orSearch(inverseIndex, query):
@@ -42,16 +48,17 @@ def orSearch(inverseIndex, query):
     Input: an inverse index, as created by makeInverseIndex, and a list of words to query
     Output: the set of document ids that contain _any_ of the specified words
     Feel free to use a loop instead of a comprehension.
-    
+
     >>> idx = makeInverseIndex(['Johann Sebastian Bach', 'Johannes Brahms', 'Johann Strauss the Younger', 'Johann Strauss the Elder', ' Johann Christian Bach',  'Carl Philipp Emanuel Bach'])
     >>> orSearch(idx, ['Bach','the'])
     {0, 2, 3, 4, 5}
     >>> orSearch(idx, ['Johann', 'Carl'])
     {0, 2, 3, 4, 5}
     """
-    pass
-
-
+    result = set()
+    for w in query:
+        result.update(inverseIndex[w])
+    return result
 
 ## 4: (Task 4) And Search
 def andSearch(inverseIndex, query):
@@ -66,5 +73,12 @@ def andSearch(inverseIndex, query):
     >>> andSearch(idx, ['Johann', 'Bach'])
     {0, 4}
     """
-    pass
-
+    result = set()
+    first = True
+    for w in query:
+        if first:
+            result.update(inverseIndex[w])
+            first = False
+        else:
+            result.intersection_update(inverseIndex[w])
+    return result
